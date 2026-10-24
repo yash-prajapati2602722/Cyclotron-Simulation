@@ -1,0 +1,8 @@
+{
+  "name": "Zyklotron Lab — Interactive Cyclotron & Magnetic Field Simulator",
+  "description": "Real-time physics simulation of a particle cyclotron and magnetic field interactions based on Virtuelle Experimente, built for mobile and desktop physics students.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
