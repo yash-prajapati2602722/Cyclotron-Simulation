@@ -1,0 +1,72 @@
+name: Build Android APK (Zyklotron 3D Lab)
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    name: Build & Publish Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Set up JDK 21 for Android Gradle
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Install Web Dependencies & Build Production Bundle
+        run: |
+          npm install --legacy-peer-deps
+          npm run build
+
+      - name: Add Capacitor Android Platform & Sync Assets
+        run: |
+          npm install --no-save @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6
+          npx cap add android
+          npx cap sync android
+
+      - name: Build Debug APK with Gradle
+        working-directory: ./android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Rename APK to Zyklotron-3D-Lab.apk
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk ./Zyklotron-3D-Lab.apk
+
+      - name: Upload Zyklotron-3D-Lab.apk to Workflow Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Zyklotron-3D-Lab-APK
+          path: ./Zyklotron-3D-Lab.apk
+          if-no-files-found: error
+
+      - name: Publish APK to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: "Zyklotron 3D Lab Android APK (Build #${{ github.run_number }})"
+          body: |
+            ### 📱 Zyklotron 3D Lab — Android APK Release
+            Download **`Zyklotron-3D-Lab.apk`** below and open it on your Android phone to install the interactive 3D/2D Cyclotron & Magnetic Field Simulator.
+          files: ./Zyklotron-3D-Lab.apk
+          draft: false
+          prerelease: false

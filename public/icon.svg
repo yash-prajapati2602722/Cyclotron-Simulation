@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#0f1e36" />
+      <stop offset="100%" stop-color="#060b14" />
+    </radialGradient>
+    <linearGradient id="beam" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="50%" stop-color="#22d3ee" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)" />
+  <!-- Left Dee D1 -->
+  <path d="M 234 96 A 160 160 0 0 0 234 416 Z" fill="#1e293b" stroke="#38bdf8" stroke-width="10" />
+  <!-- Right Dee D2 -->
+  <path d="M 278 96 A 160 160 0 0 1 278 416 Z" fill="#1e293b" stroke="#f59e0b" stroke-width="10" />
+  <!-- Spiral Ion Trajectory -->
+  <path d="M 256 256
+           A 24 24 0 0 1 256 208
+           A 48 48 0 0 1 256 304
+           A 72 72 0 0 1 256 160
+           A 96 96 0 0 1 256 352
+           A 120 120 0 0 1 256 136
+           L 420 136"
+        fill="none" stroke="url(#beam)" stroke-width="12" stroke-linecap="round" />
+  <!-- Ion Source & Target -->
+  <circle cx="256" cy="256" r="14" fill="#f59e0b" />
+  <circle cx="426" cy="136" r="18" fill="#10b981" stroke="#ffffff" stroke-width="4" />
+</svg>

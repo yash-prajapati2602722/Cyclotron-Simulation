@@ -19,6 +19,7 @@ import { MagneticFieldSuite } from './components/MagneticFieldSuite';
 import { LabManualWorkbook } from './components/LabManualWorkbook';
 import { LiveTelemetryCharts } from './components/LiveTelemetryCharts';
 import { TheoryReference } from './components/TheoryReference';
+import { PWAHeaderActions } from './components/MobileAppModal';
 import {
   Play,
   Pause,
@@ -220,7 +221,7 @@ export default function App() {
             onClick={() => setMobileTab('manual')}
             className="hover:text-slate-100 transition-colors whitespace-nowrap shrink-0"
           >
-            Grating &amp; Lab PDF
+            Lab Manual (2.4) PDF
           </a>
           <a
             href="#theory-section"
@@ -231,8 +232,9 @@ export default function App() {
           </a>
         </nav>
 
-        {/* Zone 3: 1 primary action */}
-        <div className="flex items-center shrink-0">
+        {/* Zone 3: Mobile App / GitHub & Primary Action */}
+        <div className="flex items-center gap-2 shrink-0">
+          <PWAHeaderActions />
           <button
             type="button"
             onClick={() => {
