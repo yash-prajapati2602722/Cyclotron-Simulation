@@ -1,41 +1,45 @@
-# ⚛️ Zyklotron Lab — Interactive 3D/2D Cyclotron & Magnetic Field Simulator (Android APK + Web PWA)
+# ⚛️ Zyklotron Lab — Interactive 3D/2D Cyclotron & Magnetic Field Simulator (Kotlin Android APK + Web PWA)
 
 [![Live Mobile & Web App](https://img.shields.io/badge/Live_App-Open_in_Browser_or_Mobile-06b6d4?style=for-the-badge)](https://ais-pre-zevd3yemylkurl7zcoati2-776106913773.asia-east1.run.app)
 [![Download Android APK](https://img.shields.io/badge/Android_APK-Download_from_GitHub_Releases-10b981?style=for-the-badge)](https://github.com/yash-prajapati2602722/Cyclotron-Simulation/releases)
-[![GitHub Actions Status](https://img.shields.io/github/actions/workflow/status/yash-prajapati2602722/Cyclotron-Simulation/build-android-apk.yml?style=for-the-badge&label=APK_Build)](https://github.com/yash-prajapati2602722/Cyclotron-Simulation/actions)
+[![GitHub Actions Status](https://img.shields.io/github/actions/workflow/status/yash-prajapati2602722/Cyclotron-Simulation/build-android-apk.yml?style=for-the-badge&label=Kotlin_APK_Build)](https://github.com/yash-prajapati2602722/Cyclotron-Simulation/actions)
 [![Physics Reference](https://img.shields.io/badge/Physics-Virtuelle_Experimente-f59e0b?style=for-the-badge)](https://virtuelle-experimente.de/en/b-feld/anwendung/sim-zyklotron.php)
 
 An interactive **3D WebGL & 2D Canvas Physics Simulation + Gamified Resonance Arena** of a Lawrence Cyclotron, Relativistic Synchro-Cyclotron, Bainbridge Mass Spectrometer, and Wien Velocity Filter. Built for physics students and educators based on **[Virtuelle Experimente (`sim-zyklotron.php`)](https://virtuelle-experimente.de/en/b-feld/anwendung/sim-zyklotron.php)** and **Applied Physics Lab Experiment 2.4**.
 
 ---
 
-## 📦 Download & Build Android APK (`Zyklotron-3D-Lab.apk`)
+## 🔌 Install on Your Mobile via USB Cable (3 Easy Methods)
 
-This repository (`yash-prajapati2602722/Cyclotron-Simulation`) includes a pre-configured **Capacitor Android project (`capacitor.config.json`)**, `.npmrc` (`legacy-peer-deps=true`), and an automated **GitHub Actions APK Builder (`.github/workflows/build-android-apk.yml`)**.
+### Method A: USB File Transfer (No Developer Tools Needed)
+1. Download **`Zyklotron-3D-Lab.apk`** from **[GitHub Releases](https://github.com/yash-prajapati2602722/Cyclotron-Simulation/releases)** (or generate instantly via **[PWABuilder](https://www.pwabuilder.com/reportcard?site=https://ais-pre-zevd3yemylkurl7zcoati2-776106913773.asia-east1.run.app)**).
+2. Connect your Android phone to your computer with a **USB cable** and select **"File Transfer / MTP"** on your phone screen.
+3. Copy `Zyklotron-3D-Lab.apk` into your phone's **Download** folder, open the **Files** app on your phone, and tap `Zyklotron-3D-Lab.apk` to install!
 
-### Method 1: Download Compiled `.apk` from GitHub Releases / Actions
-1. Open **[GitHub Releases](https://github.com/yash-prajapati2602722/Cyclotron-Simulation/releases)** or **[GitHub Actions](https://github.com/yash-prajapati2602722/Cyclotron-Simulation/actions)** on this repository.
-2. Download **`Zyklotron-3D-Lab.apk`** (or the `Zyklotron-3D-Lab-APK` artifact zip) directly to your Android phone and tap to install!
+### Method B: Direct USB Debugging Install (`adb install` / `npm run usb:install`)
+1. On your Android phone, enable **Settings → Developer Options → USB Debugging** and connect via USB.
+2. Run either command on your computer:
+   ```bash
+   # If you downloaded Zyklotron-3D-Lab.apk:
+   adb install -r Zyklotron-3D-Lab.apk
 
-### Method 2: Instant 1-Click APK Package via PWABuilder
-1. Open **[PWABuilder APK Generator](https://www.pwabuilder.com/reportcard?site=https://ais-pre-zevd3yemylkurl7zcoati2-776106913773.asia-east1.run.app)**.
-2. Click **"Package for Stores" → "Android" → "Download Package"** to get a signed `.apk` in 30 seconds.
+   # Or build & install directly from source onto your USB-connected phone:
+   npm install --legacy-peer-deps
+   npm run apk:setup
+   npm run usb:install
+   ```
 
-### Method 3: Build `.apk` Locally via Android Studio / Gradle
-```bash
-npm install --legacy-peer-deps
-npm run apk:setup
-npm run apk:build
-# Output APK: android/app/build/outputs/apk/debug/app-debug.apk
-```
+### Method C: Open in Android Studio & Click "Run on Device" (`▶`)
+1. Clone this repository and run `npm install --legacy-peer-deps && npm run apk:setup`.
+2. Open the `./android` folder in **Android Studio** (`MainActivity.kt` with Kotlin 1.9.22 & Android SDK 34).
+3. Plug in your phone via USB and click the green **Run (`▶`)** button in Android Studio.
 
 ---
 
-## 📱 Use on Mobile Immediately (Android & iPhone PWA)
+## 📱 Use on Mobile Without USB (QR Code / PWA)
 
 1. **Open the Live Link on your phone**:
    👉 **[https://ais-pre-zevd3yemylkurl7zcoati2-776106913773.asia-east1.run.app](https://ais-pre-zevd3yemylkurl7zcoati2-776106913773.asia-east1.run.app)**
-   *(Or click the **"📱 Mobile / APK"** button in the top bar of the app to scan the QR code with your phone camera!)*
 2. **Install on Home Screen**:
    - **Android (Chrome / Edge)**: Tap **"Install App"** in the top navigation bar (or browser menu `⋮` → **Add to Home screen / Install app**).
    - **iPhone / iPad (Safari)**: Tap the **Share** button (`↑`) in Safari and select **"Add to Home Screen"**.
@@ -44,36 +48,8 @@ npm run apk:build
 
 ## ✨ Core Features
 
-### 1. 🌀 3D & 2D Cyclotron / Synchro-Cyclotron Simulator (`sim-zyklotron.php`)
-- **Interactive 3D WebGL Chamber**: Inspect the hollow copper **Dee electrodes ($D_1, D_2$)**, North/South electromagnet pole yokes, 3D magnetic flux vectors ($\vec{B}$), glowing AC electric field lines ($\vec{E}$ across the accelerating gap), electrostatic deflector channel, and **Target Detector Box (`🎯 TARGET`)**.
-- **Direct `V` and `B = T` Control Bar**: Adjust Acceleration Voltage $V$ (`500 V – 250,000 V`) and Magnetic Flux Density $B$ (`0.05 T – 2.50 T`) directly below the simulation canvas with sliders, numeric inputs, `-`/`+` buttons, and 1-click presets.
-- **Target Extraction (`Fire to Target`)**: Watch the accelerated ion spiral outward to $R_{\text{max}}$, enter the deflector channel, and strike the Target Detector with a visual shockwave and telemetry readout.
-- **Classical vs. Relativistic Synchro-Cyclotron Modes**:
-  - Toggle relativistic mass dilation $\gamma = \frac{1}{\sqrt{1 - (v/c)^2}}$ to observe phase lag in a fixed-frequency classical cyclotron.
-  - Enable **Synchro-Cyclotron ($f_{RF}/\gamma$)** mode to automatically modulate the oscillator frequency in lockstep with the relativistic Larmor frequency.
-
-### 2. 🎮 Resonance Game Arena (2D & 3D Interactive Physics Game)
-- **3 Progressive Physics Missions**:
-  - **Level 1**: *Proton Isotope Calibration* (Classic Resonance Lock)
-  - **Level 2**: *High-Field Alpha Injection* (Manual polarity flips + RF phase tuning)
-  - **Level 3**: *Relativistic Synchro-Challenge* (Live frequency tracking under Lorentz $\gamma$ dilation)
-- **Instant Target Extraction**: Build beam energy or press **🎯 FIRE BEAM AT TARGET NOW** to deflect the ion beam into the target detector and score mission combos.
-
-### 3. 🧲 Companion B-Feld Lab (`virtuelle-experimente.de`)
-- **Bainbridge Mass Spectrometer (`sim-massenspektrometer.php`)**: Compare semi-circular separation radii $r = \frac{mv_0}{qB_2}$ and detector spacing $\Delta d = 2\Delta r$ for $^{1}\text{H}^+$, $^{2}\text{H}^+$, $^{4}\text{He}^{2+}$, $^{12}\text{C}^+$, $^{14}\text{C}^+$, $^{16}\text{O}^+$, and $^{20}\text{Ne}^+$.
-- **Wien Velocity Filter**: Balance electric force $F_E = qE$ and magnetic Lorentz force $F_B = qvB$ to isolate ions at pass velocity $v_{\text{pass}} = E/B$.
-
-### 4. 📘 Experiment 2.4 Lab Manual Workbook & Embedded PDF
-- Includes the complete 12-page **Cyclotron Simulation Lab Manual PDF** with inline viewer, downloadable PDF, pre-filled observation tables (**Tables 2.4.1(a,b,c)** and **Tables 2.4.2.1 & 2.4.2.2**), interactive trajectory visualizers at $V = 4000\text{ V}, B = 0.1\text{ T}$, and all **13 Sample Viva-Voce Questions & Answers**.
-
----
-
-## 📐 Fundamental Physics Equations
-
-| Quantity | Formula | Description |
-| :--- | :--- | :--- |
-| **Cyclotron (Larmor) Frequency** | $$f_c = \frac{qB}{2\pi \gamma m_0}$$ | Independent of radius $r$ in the non-relativistic regime ($\gamma \approx 1$) |
-| **Trajectory Radius** | $$R = \frac{\gamma m_0 v}{qB}$$ | Semi-circular orbit radius inside each magnetic Dee |
-| **Kinetic Energy per Gap Crossing** | $$\Delta E_k = q V_0 \cos(\phi)$$ | Energy gained each time the ion crosses the gap between $D_1$ and $D_2$ |
-| **Maximum Extraction Energy** | $$E_{\text{max}} = \frac{q^2 B^2 R_{\text{max}}^2}{2m_0}$$ | Final kinetic energy at extraction radius $R_{\text{max}}$ |
-| **Number of Revolutions** | $$N = \frac{E_{\text{max}}}{2 q V_0} = \frac{q B^2 R_{\text{max}}^2}{4 m_0 V_0}$$ | Total full turns before entering the deflector channel |
+- **3D & 2D Cyclotron / Synchro-Cyclotron Simulator (`sim-zyklotron.php`)**: Hollow copper Dees ($D_1, D_2$), 3D magnetic flux vectors ($\vec{B}$), glowing AC electric field lines ($\vec{E}$), inline **`Voltage V`** and **`Magnetic Field B = T`** controls, and **Target Detector (`🎯 TARGET`)** extraction.
+- **Native Kotlin + Android SDK (`MainActivity.kt`)**: Hardware-accelerated OpenGL ES 2.0 WebGL rendering, dark system bar theming (`#060B14`), keep-screen-on support, and native Android haptic feedback (`AndroidZyklotronBridge`) on target impact.
+- **Resonance Game Arena**: 3 playable physics missions with live RF phase tuning and instant target beam firing.
+- **Companion B-Feld Lab**: Bainbridge Mass Spectrometer & Wien Velocity Filter simulations.
+- **Experiment 2.4 Lab Manual Workbook**: Embedded 12-page Cyclotron Simulation PDF, pre-filled observation tables, interactive trajectory visualizers, and 13 Viva-Voce Q&As.

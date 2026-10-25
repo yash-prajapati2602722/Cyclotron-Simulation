@@ -35,17 +35,38 @@ jobs:
           npm install --legacy-peer-deps
           npm run build
 
-      - name: Install Capacitor Android & Copy Assets into Kotlin Project
+      - name: Generate Android Gradle Wrapper & Inject Native Kotlin SDK Files
         run: |
+          mkdir -p /tmp/kotlin-backup
+          cp android/build.gradle /tmp/kotlin-backup/root.build.gradle
+          cp android/app/build.gradle /tmp/kotlin-backup/app.build.gradle
+          cp android/app/src/main/AndroidManifest.xml /tmp/kotlin-backup/AndroidManifest.xml
+          cp android/app/src/main/java/com/zyklotron/physicslab/MainActivity.kt /tmp/kotlin-backup/MainActivity.kt
+
+          rm -rf android
           npm install --no-save --legacy-peer-deps @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6
-          npx cap copy android
-          npx cap update android
+          npx cap add android
+          npx cap sync android
+
+          rm -f android/app/src/main/java/com/zyklotron/physicslab/MainActivity.java
+          cp /tmp/kotlin-backup/root.build.gradle android/build.gradle
+          cp /tmp/kotlin-backup/app.build.gradle android/app/build.gradle
+          cp /tmp/kotlin-backup/AndroidManifest.xml android/app/src/main/AndroidManifest.xml
+          cp /tmp/kotlin-backup/MainActivity.kt android/app/src/main/java/com/zyklotron/physicslab/MainActivity.kt
+
+          for dir in android/app/src/main/res/mipmap-mdpi android/app/src/main/res/mipmap-hdpi android/app/src/main/res/mipmap-xhdpi android/app/src/main/res/mipmap-xxhdpi android/app/src/main/res/mipmap-xxxhdpi; do
+            if [ -d "$dir" ]; then
+              cp public/pwa-192x192.png "$dir/ic_launcher.png"
+              cp public/pwa-192x192.png "$dir/ic_launcher_round.png"
+              cp public/pwa-512x512.png "$dir/ic_launcher_foreground.png"
+            fi
+          done
 
       - name: Build Native Kotlin Debug APK with Gradle
         working-directory: ./android
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Rename APK to Zyklotron-3D-Lab.apk
         run: |
@@ -68,7 +89,8 @@ jobs:
           body: |
             ### 📱 Zyklotron 3D Lab — Native Kotlin + Android SDK APK Release
             Built with **Kotlin 1.9.22 (`MainActivity.kt`)**, **Android SDK 34**, and **Hardware-Accelerated WebGL**.
-            Download **`Zyklotron-3D-Lab.apk`** below and open it on your Android phone to install!
+            - **Direct Phone Install**: Download **`Zyklotron-3D-Lab.apk`** below on your phone and tap to install.
+            - **USB Install from PC**: Connect phone via USB with USB Debugging enabled and run `adb install -r Zyklotron-3D-Lab.apk`.
           files: ./Zyklotron-3D-Lab.apk
           draft: false
           prerelease: false

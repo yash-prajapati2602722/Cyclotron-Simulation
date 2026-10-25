@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.zyklotron.physicslab",
+      "sha256_cert_fingerprints": [
+        "43:BF:32:23:C1:03:DA:91:39:E0:6B:CB:85:39:F7:0E:71:ED:27:6F:82:18:5A:56:1E:75:B7:EA:2C:99:2D:CB"
+      ]
+    }
+  }
+]

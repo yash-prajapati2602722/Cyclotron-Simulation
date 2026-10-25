@@ -48,6 +48,12 @@ export default defineConfig(() => {
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2,pdf}'],
           maximumFileSizeToCacheInBytes: 15 * 1024 * 1024,
+          navigateFallbackDenylist: [
+            /^\/Zyklotron-3D-Lab\.apk$/,
+            /^\/\.well-known\/.*/,
+            /\.apk$/,
+            /\.pdf$/,
+          ],
           runtimeCaching: [
             {
               urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
