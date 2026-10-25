@@ -325,6 +325,10 @@ export function stepCyclotronPhysics(
     const nx = Math.min(targetX, state.x + stepX);
     const ny = exitY;
     const hitNow = nx >= targetX - 0.002;
+    if (hitNow && !state.targetHit && typeof window !== 'undefined') {
+      const bridge = (window as unknown as { AndroidZyklotronBridge?: { triggerTargetHitHaptic?: () => void } }).AndroidZyklotronBridge;
+      bridge?.triggerTargetHitHaptic?.();
+    }
     const nextTrail = [
       ...state.trail,
       { x: nx, y: ny, keKeV: state.kineticEnergyKeV, inGap: false },

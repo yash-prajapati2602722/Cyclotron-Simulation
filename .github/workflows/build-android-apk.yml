@@ -1,4 +1,4 @@
-name: Build Android APK (Zyklotron 3D Lab)
+name: Build Android APK (Zyklotron 3D Lab - Kotlin & Android SDK)
 
 on:
   push:
@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   build-apk:
-    name: Build & Publish Android APK
+    name: Build & Publish Native Kotlin Android APK
     runs-on: ubuntu-latest
 
     steps:
@@ -24,32 +24,33 @@ jobs:
         with:
           node-version: 20
 
-      - name: Set up JDK 21 for Android Gradle
+      - name: Set up JDK 17 for Kotlin & Android SDK Gradle
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '17'
 
       - name: Install Web Dependencies & Build Production Bundle
         run: |
           npm install --legacy-peer-deps
           npm run build
 
-      - name: Add Capacitor Android Platform & Sync Assets
+      - name: Install Capacitor Android & Copy Assets into Kotlin Project
         run: |
-          npm install --no-save @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6
-          npx cap add android
-          npx cap sync android
+          npm install --no-save --legacy-peer-deps @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6
+          npx cap copy android
+          npx cap update android
 
-      - name: Build Debug APK with Gradle
+      - name: Build Native Kotlin Debug APK with Gradle
         working-directory: ./android
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug --no-daemon
 
       - name: Rename APK to Zyklotron-3D-Lab.apk
         run: |
           cp android/app/build/outputs/apk/debug/app-debug.apk ./Zyklotron-3D-Lab.apk
+          ls -lh ./Zyklotron-3D-Lab.apk
 
       - name: Upload Zyklotron-3D-Lab.apk to Workflow Artifacts
         uses: actions/upload-artifact@v4
@@ -60,13 +61,14 @@ jobs:
 
       - name: Publish APK to GitHub Releases
         uses: softprops/action-gh-release@v2
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        continue-on-error: true
         with:
-          tag_name: v1.0.${{ github.run_number }}
-          name: "Zyklotron 3D Lab Android APK (Build #${{ github.run_number }})"
+          tag_name: v2.0.${{ github.run_number }}
+          name: "Zyklotron 3D Lab — Native Kotlin Android APK (Build #${{ github.run_number }})"
           body: |
-            ### 📱 Zyklotron 3D Lab — Android APK Release
-            Download **`Zyklotron-3D-Lab.apk`** below and open it on your Android phone to install the interactive 3D/2D Cyclotron & Magnetic Field Simulator.
+            ### 📱 Zyklotron 3D Lab — Native Kotlin + Android SDK APK Release
+            Built with **Kotlin 1.9.22 (`MainActivity.kt`)**, **Android SDK 34**, and **Hardware-Accelerated WebGL**.
+            Download **`Zyklotron-3D-Lab.apk`** below and open it on your Android phone to install!
           files: ./Zyklotron-3D-Lab.apk
           draft: false
           prerelease: false

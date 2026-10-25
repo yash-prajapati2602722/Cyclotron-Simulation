@@ -2,7 +2,6 @@
   "appId": "com.zyklotron.physicslab",
   "appName": "Zyklotron 3D Lab",
   "webDir": "dist",
-  "bundledWebRuntime": false,
   "server": {
     "androidScheme": "https"
   },

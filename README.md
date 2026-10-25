@@ -1,7 +1,8 @@
 # ⚛️ Zyklotron Lab — Interactive 3D/2D Cyclotron & Magnetic Field Simulator (Android APK + Web PWA)
 
 [![Live Mobile & Web App](https://img.shields.io/badge/Live_App-Open_in_Browser_or_Mobile-06b6d4?style=for-the-badge)](https://ais-pre-zevd3yemylkurl7zcoati2-776106913773.asia-east1.run.app)
-[![Android APK Workflow](https://img.shields.io/badge/Android_APK-Auto_Build_via_GitHub_Actions-10b981?style=for-the-badge)](#-download--build-android-apk-zyklotron-3d-labapk)
+[![Download Android APK](https://img.shields.io/badge/Android_APK-Download_from_GitHub_Releases-10b981?style=for-the-badge)](https://github.com/yash-prajapati2602722/Cyclotron-Simulation/releases)
+[![GitHub Actions Status](https://img.shields.io/github/actions/workflow/status/yash-prajapati2602722/Cyclotron-Simulation/build-android-apk.yml?style=for-the-badge&label=APK_Build)](https://github.com/yash-prajapati2602722/Cyclotron-Simulation/actions)
 [![Physics Reference](https://img.shields.io/badge/Physics-Virtuelle_Experimente-f59e0b?style=for-the-badge)](https://virtuelle-experimente.de/en/b-feld/anwendung/sim-zyklotron.php)
 
 An interactive **3D WebGL & 2D Canvas Physics Simulation + Gamified Resonance Arena** of a Lawrence Cyclotron, Relativistic Synchro-Cyclotron, Bainbridge Mass Spectrometer, and Wien Velocity Filter. Built for physics students and educators based on **[Virtuelle Experimente (`sim-zyklotron.php`)](https://virtuelle-experimente.de/en/b-feld/anwendung/sim-zyklotron.php)** and **Applied Physics Lab Experiment 2.4**.
@@ -10,14 +11,11 @@ An interactive **3D WebGL & 2D Canvas Physics Simulation + Gamified Resonance Ar
 
 ## 📦 Download & Build Android APK (`Zyklotron-3D-Lab.apk`)
 
-This repository includes a pre-configured **Capacitor Android project (`capacitor.config.json`)** and an automated **GitHub Actions APK Builder (`.github/workflows/build-android-apk.yml`)**.
+This repository (`yash-prajapati2602722/Cyclotron-Simulation`) includes a pre-configured **Capacitor Android project (`capacitor.config.json`)**, `.npmrc` (`legacy-peer-deps=true`), and an automated **GitHub Actions APK Builder (`.github/workflows/build-android-apk.yml`)**.
 
-### Method 1: Automatic `.apk` Build on GitHub (Recommended — Zero Local Setup)
-1. Click the **GitHub icon ("Save to GitHub")** in the top-right corner of Google AI Studio to push this project to your GitHub account.
-2. Open your new repository on GitHub and click the **Actions** tab (or **Releases** on the right sidebar).
-3. The workflow **`Build Android APK (Zyklotron 3D Lab)`** automatically compiles the app and publishes **`Zyklotron-3D-Lab.apk`** in:
-   - **GitHub Releases** (right sidebar of your repo → download `Zyklotron-3D-Lab.apk` directly on your phone)
-   - **GitHub Actions Artifacts** (`Zyklotron-3D-Lab-APK.zip`)
+### Method 1: Download Compiled `.apk` from GitHub Releases / Actions
+1. Open **[GitHub Releases](https://github.com/yash-prajapati2602722/Cyclotron-Simulation/releases)** or **[GitHub Actions](https://github.com/yash-prajapati2602722/Cyclotron-Simulation/actions)** on this repository.
+2. Download **`Zyklotron-3D-Lab.apk`** (or the `Zyklotron-3D-Lab-APK` artifact zip) directly to your Android phone and tap to install!
 
 ### Method 2: Instant 1-Click APK Package via PWABuilder
 1. Open **[PWABuilder APK Generator](https://www.pwabuilder.com/reportcard?site=https://ais-pre-zevd3yemylkurl7zcoati2-776106913773.asia-east1.run.app)**.
@@ -25,7 +23,7 @@ This repository includes a pre-configured **Capacitor Android project (`capacito
 
 ### Method 3: Build `.apk` Locally via Android Studio / Gradle
 ```bash
-npm install
+npm install --legacy-peer-deps
 npm run apk:setup
 npm run apk:build
 # Output APK: android/app/build/outputs/apk/debug/app-debug.apk
