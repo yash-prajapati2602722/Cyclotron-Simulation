@@ -12,14 +12,15 @@ import {
   Share2,
   Package,
   Code2,
-  Cable,
   CheckCircle2,
+  Cpu,
 } from 'lucide-react';
 import { usePWAInstall } from '../hooks/usePWAInstall';
 
 const SHARED_MOBILE_URL = 'https://ais-pre-zevd3yemylkurl7zcoati2-776106913773.asia-east1.run.app';
 const GITHUB_REPO_URL = 'https://github.com/yash-prajapati2602722/Cyclotron-Simulation';
-const DIRECT_APK_PATH = '/Zyklotron-3D-Lab.apk';
+const DIRECT_APK_PATH = '/app.apk';
+const ALT_APK_PATH = '/Zyklotron-3D-Lab.apk';
 
 const KOTLIN_MAIN_ACTIVITY_CODE = `package com.zyklotron.physicslab
 
@@ -77,17 +78,19 @@ class MainActivity : BridgeActivity() {
 
 export const PWAHeaderActions: React.FC = () => {
   const { isInstallable, isInstalled, isIOS, isOnline, install } = usePWAInstall();
-  const [openModal, setOpenModal] = useState<'mobile' | 'usb' | 'github' | 'kotlin' | null>(null);
+  const [openModal, setOpenModal] = useState<'mobile' | 'github' | 'kotlin' | null>(null);
   const [qrMode, setQrMode] = useState<'apk' | 'app'>('apk');
   const [copiedUrl, setCopiedUrl] = useState(false);
   const [copiedGit, setCopiedGit] = useState(false);
   const [copiedKotlin, setCopiedKotlin] = useState(false);
-  const [copiedUsb, setCopiedUsb] = useState(false);
+
+  const isNativeKotlinApp =
+    typeof window !== 'undefined' && 'AndroidZyklotronBridge' in window;
 
   const appUrl =
     typeof window !== 'undefined' && window.location.origin.includes('ais-')
       ? SHARED_MOBILE_URL
-      : typeof window !== 'undefined'
+      : typeof window !== 'undefined' && window.location.origin.startsWith('http') && !window.location.origin.includes('localhost')
       ? window.location.origin
       : SHARED_MOBILE_URL;
 
@@ -118,36 +121,38 @@ export const PWAHeaderActions: React.FC = () => {
     setTimeout(() => setCopiedKotlin(false), 2200);
   };
 
-  const handleCopyUsbCommands = () => {
-    navigator.clipboard.writeText(
-      `# Method A: Install downloaded APK via USB cable\nadb devices\nadb install -r Zyklotron-3D-Lab.apk\n\n# Method B: Build & Install directly from source onto USB phone\ngit clone https://github.com/yash-prajapati2602722/Cyclotron-Simulation.git\ncd Cyclotron-Simulation\nnpm install --legacy-peer-deps\nnpm run apk:setup\nnpm run usb:install`
-    );
-    setCopiedUsb(true);
-    setTimeout(() => setCopiedUsb(false), 2200);
-  };
-
   return (
     <>
       {!isOnline && (
-        <div className="fixed bottom-16 lg:bottom-4 left-4 z-50 flex items-center gap-2 rounded-lg bg-amber-500/95 px-3 py-1.5 text-xs font-semibold text-slate-950 shadow-lg">
+        <div className="fixed bottom-16 lg:bottom-4 left-4 z-50 flex items-center gap-2 rounded-lg bg-emerald-500/95 px-3 py-1.5 text-xs font-semibold text-slate-950 shadow-lg">
           <WifiOff className="w-3.5 h-3.5" />
-          Offline Mode — Running from Mobile PWA Cache
+          100% Offline Mode Active — Running Locally
         </div>
       )}
 
       <div className="flex items-center gap-1.5">
-        {/* DIRECT 1-CLICK APK DOWNLOAD BUTTON IN HEADER */}
-        <a
-          href={DIRECT_APK_PATH}
-          download="Zyklotron-3D-Lab.apk"
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold shadow-md shadow-emerald-500/20 transition cursor-pointer"
-          title="Direct 1-Click Download Zyklotron-3D-Lab.apk (1.4 MB Signed Android APK)"
-        >
-          <Download className="w-3.5 h-3.5 stroke-[2.5]" />
-          <span>Download APK</span>
-        </a>
+        {isNativeKotlinApp ? (
+          <button
+            onClick={() => setOpenModal('kotlin')}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-500/20 border border-emerald-400/50 text-emerald-200 text-xs font-bold cursor-pointer"
+            title="Running inside 100% Offline Native Kotlin Android App"
+          >
+            <Cpu className="w-3.5 h-3.5 text-emerald-300" />
+            <span>Offline Kotlin APK Active</span>
+          </button>
+        ) : (
+          <a
+            href={DIRECT_APK_PATH}
+            download="app.apk"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold shadow-md shadow-emerald-500/20 transition cursor-pointer"
+            title="Download 100% Offline Native Kotlin Android app.apk"
+          >
+            <Download className="w-3.5 h-3.5 stroke-[2.5]" />
+            <span>Download Offline app.apk</span>
+          </a>
+        )}
 
-        {!isInstalled && isInstallable && (
+        {!isInstalled && isInstallable && !isNativeKotlinApp && (
           <button
             onClick={install}
             className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-400/50 text-emerald-200 text-xs font-semibold transition cursor-pointer"
@@ -161,19 +166,10 @@ export const PWAHeaderActions: React.FC = () => {
         <button
           onClick={() => setOpenModal('mobile')}
           className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-400/40 text-cyan-200 text-xs font-semibold transition cursor-pointer"
-          title="Scan QR Code to Download APK on Mobile Phone"
+          title="Download Offline Kotlin app.apk or Scan QR Code"
         >
           <QrCode className="w-3.5 h-3.5 text-cyan-300" />
-          <span className="hidden sm:inline">QR / Mobile</span>
-        </button>
-
-        <button
-          onClick={() => setOpenModal('usb')}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/50 text-amber-200 text-xs font-semibold transition cursor-pointer"
-          title="Install App on Mobile via USB Cable (ADB / File Transfer / Android Studio)"
-        >
-          <Cable className="w-3.5 h-3.5 text-amber-300" />
-          <span className="hidden sm:inline">USB</span>
+          <span className="hidden sm:inline">APK / QR</span>
         </button>
 
         <button
@@ -188,121 +184,13 @@ export const PWAHeaderActions: React.FC = () => {
         <button
           onClick={() => setOpenModal('github')}
           className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-medium transition cursor-pointer"
-          title="GitHub Auto-APK Builder & Push Guide"
+          title="GitHub Repository & APK Release"
         >
           <Github className="w-3.5 h-3.5 text-slate-300" />
         </button>
       </div>
 
-      {/* USB CABLE MOBILE INSTALL MODAL */}
-      {openModal === 'usb' && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 overflow-y-auto">
-          <div className="w-full max-w-xl rounded-2xl bg-[#0b1322] border border-amber-500/40 p-5 sm:p-6 shadow-2xl text-slate-100 my-auto">
-            <div className="flex items-start justify-between gap-3 border-b border-slate-800 pb-3.5">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-amber-500/15 border border-amber-400/40 flex items-center justify-center text-amber-300">
-                  <Cable className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold text-white">
-                    🔌 USB Cable Se Mobile Me APK Kaise Install Karein?
-                  </h3>
-                  <p className="text-xs text-slate-400">
-                    Signed <code className="text-emerald-300">Zyklotron-3D-Lab.apk</code> (1.4 MB) is ready for direct download &amp; USB transfer
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => setOpenModal(null)}
-                className="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="mt-4 space-y-3 text-xs">
-              {/* Way 1: Simple USB File Transfer */}
-              <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/30 p-3.5 space-y-2.5">
-                <div className="flex items-center justify-between gap-2 flex-wrap">
-                  <span className="font-bold text-emerald-300">
-                    Tarika 1 (Sabse Aasan): APK Download Karke USB Se Phone Me Dalein
-                  </span>
-                  <a
-                    href={DIRECT_APK_PATH}
-                    download="Zyklotron-3D-Lab.apk"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow transition"
-                  >
-                    <Download className="w-3.5 h-3.5 stroke-[2.5]" />
-                    Download Zyklotron-3D-Lab.apk (1.4 MB)
-                  </a>
-                </div>
-                <ol className="list-decimal list-inside space-y-1 text-slate-300 leading-relaxed">
-                  <li>
-                    Upar green button dabakar <strong><code>Zyklotron-3D-Lab.apk</code></strong> apne PC ya phone me download karein.
-                  </li>
-                  <li>
-                    Mobile ko <strong>USB Cable</strong> se PC me lagayein aur phone par <strong>&quot;File Transfer / MTP&quot;</strong> select karein.
-                  </li>
-                  <li>
-                    <code>Zyklotron-3D-Lab.apk</code> ko phone ke <strong>Download</strong> folder me copy karein aur phone me tap karke <strong>Install</strong> kar lein!
-                  </li>
-                </ol>
-              </div>
-
-              {/* Way 2: ADB / Terminal USB Debugging */}
-              <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-3.5 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-amber-300">
-                    Tarika 2: USB Debugging (`adb install -r Zyklotron-3D-Lab.apk`)
-                  </span>
-                  <button
-                    onClick={handleCopyUsbCommands}
-                    className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-mono cursor-pointer"
-                  >
-                    {copiedUsb ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                    {copiedUsb ? 'Copied!' : 'Copy USB Commands'}
-                  </button>
-                </div>
-                <p className="text-slate-300">
-                  Phone ke <strong>Settings → Developer Options → USB Debugging ON</strong> karein, USB cable lagayein, aur PC terminal me yeh command chalayein:
-                </p>
-                <pre className="rounded-lg bg-slate-950 border border-slate-800/90 p-3 font-mono text-[11px] text-slate-300 overflow-x-auto leading-relaxed">
-{`# Direct APK install over USB:
-adb devices
-adb install -r Zyklotron-3D-Lab.apk
-
-# Or build & install directly from source onto USB phone:
-npm run usb:install`}
-                </pre>
-              </div>
-
-              {/* Way 3: Bina USB ke QR / Direct Link */}
-              <div className="rounded-xl bg-cyan-500/10 border border-cyan-500/30 p-3 flex items-center justify-between gap-3">
-                <span className="text-slate-300">
-                  💡 <strong>Tip:</strong> Bina USB cable ke seedha phone camera se QR scan karke bhi `.APK` download kar sakte hain!
-                </span>
-                <button
-                  onClick={() => setOpenModal('mobile')}
-                  className="shrink-0 px-3 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs cursor-pointer"
-                >
-                  Scan APK QR
-                </button>
-              </div>
-            </div>
-
-            <div className="mt-4 pt-3 border-t border-slate-800 flex justify-end">
-              <button
-                onClick={() => setOpenModal(null)}
-                className="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white cursor-pointer"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* MOBILE APP & ANDROID APK DOWNLOAD MODAL */}
+      {/* MOBILE APP & OFFLINE KOTLIN APK DOWNLOAD MODAL */}
       {openModal === 'mobile' && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 overflow-y-auto">
           <div className="w-full max-w-xl rounded-2xl bg-[#0b1322] border border-cyan-500/30 p-5 sm:p-6 shadow-2xl text-slate-100 my-auto">
@@ -313,10 +201,10 @@ npm run usb:install`}
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-white">
-                    📲 Download Android APK (`Zyklotron-3D-Lab.apk`)
+                    📲 100% Offline Native Kotlin Android APK (`app.apk`)
                   </h3>
                   <p className="text-xs text-slate-400">
-                    Signed Release APK • Package: <code className="text-emerald-300">com.zyklotron.physicslab</code> • v2.4.0 (1.4 MB)
+                    Compiled with Kotlin 1.9.22 + Android SDK 34 • Runs 100% Offline without Internet
                   </p>
                 </div>
               </div>
@@ -328,41 +216,36 @@ npm run usb:install`}
               </button>
             </div>
 
-            {/* PRIMARY 1-CLICK APK DOWNLOAD BANNER */}
+            {/* PRIMARY 1-CLICK OFFLINE APK DOWNLOAD BANNER */}
             <div className="mt-4 rounded-xl bg-emerald-500/10 border border-emerald-500/40 p-4 text-xs space-y-3">
               <div className="flex items-center justify-between gap-2 flex-wrap">
                 <span className="font-bold text-emerald-300 flex items-center gap-1.5 text-sm">
                   <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  Ready to Install — Signed Android APK (1.4 MB)
+                  100% Offline Standalone Kotlin APK (`app.apk`)
                 </span>
-                <button
-                  onClick={() => setOpenModal('usb')}
-                  className="text-[11px] font-semibold text-amber-300 hover:underline cursor-pointer"
-                >
-                  🔌 USB Cable Install Guide →
-                </button>
+                <span className="px-2 py-0.5 rounded bg-violet-500/20 border border-violet-400/40 text-violet-200 font-mono text-[10px]">
+                  MainActivity.kt + Bundled 3D Assets
+                </span>
               </div>
               <p className="text-slate-300 leading-relaxed">
-                Niche diye gaye button par click karke seedha <strong><code>Zyklotron-3D-Lab.apk</code></strong> download karein aur apne Android phone par open karke <strong>Install</strong> karein!
+                Is <strong><code>app.apk</code></strong> ke andar poora 3D WebGL engine, Cyclotron simulation, PDF Lab Manual, aur Kotlin native bridge (<code>MainActivity.kt</code>) pre-bundled hai — <strong>bina internet (100% Offline)</strong> chalta hai!
               </p>
               <div className="flex flex-wrap items-center gap-2.5 pt-0.5">
                 <a
                   href={DIRECT_APK_PATH}
-                  download="Zyklotron-3D-Lab.apk"
+                  download="app.apk"
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-lg shadow-emerald-500/20 transition"
                 >
                   <Download className="w-4 h-4 stroke-[2.5]" />
-                  Download Zyklotron-3D-Lab.apk (1.4 MB)
+                  Download Offline app.apk
                 </a>
                 <a
-                  href={`${GITHUB_REPO_URL}/releases`}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={ALT_APK_PATH}
+                  download="Zyklotron-3D-Lab.apk"
                   className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-100 font-semibold text-xs transition"
                 >
-                  <Github className="w-3.5 h-3.5" />
-                  GitHub Releases
-                  <ExternalLink className="w-3 h-3" />
+                  <Download className="w-3.5 h-3.5 text-cyan-300" />
+                  Zyklotron-3D-Lab.apk
                 </a>
               </div>
             </div>
@@ -378,7 +261,7 @@ npm run usb:install`}
                         : 'text-slate-400 hover:text-white'
                     }`}
                   >
-                    APK File QR
+                    app.apk QR
                   </button>
                   <button
                     onClick={() => setQrMode('app')}
@@ -391,16 +274,22 @@ npm run usb:install`}
                     Web App QR
                   </button>
                 </div>
-                <div className="bg-white p-2 rounded-xl shadow-md">
-                  <img
-                    src={qrImageUrl}
-                    alt="Scan QR Code on Mobile"
-                    className="w-36 h-36 object-contain"
-                  />
-                </div>
+                {isOnline ? (
+                  <div className="bg-white p-2 rounded-xl shadow-md">
+                    <img
+                      src={qrImageUrl}
+                      alt="Scan QR Code on Mobile"
+                      className="w-36 h-36 object-contain"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-36 h-36 flex items-center justify-center text-center p-3 rounded-xl bg-slate-950 border border-slate-800 text-[11px] text-emerald-300">
+                    ✅ Running 100% Offline Inside Local Bundle
+                  </div>
+                )}
                 <span className="mt-2 flex items-center gap-1 text-[11px] font-mono text-cyan-300 text-center">
                   <QrCode className="w-3.5 h-3.5 shrink-0" />
-                  {qrMode === 'apk' ? 'Scan to Download .APK' : 'Scan to Open Web App'}
+                  {qrMode === 'apk' ? 'Scan to Download app.apk' : 'Scan to Open Web App'}
                 </span>
               </div>
 
@@ -408,7 +297,7 @@ npm run usb:install`}
                 <div className="rounded-xl bg-slate-900/80 border border-slate-800 p-3">
                   <div className="font-semibold text-cyan-300 mb-1">
                     {qrMode === 'apk'
-                      ? 'Direct .APK Download Link (Copy for Mobile):'
+                      ? 'Direct Offline app.apk Link:'
                       : 'Direct Mobile Web App Link:'}
                   </div>
                   <div className="flex items-center gap-1.5 mt-1.5">
@@ -430,13 +319,13 @@ npm run usb:install`}
 
                 <div className="rounded-xl bg-slate-900/80 border border-slate-800 p-3 space-y-1.5 text-slate-300">
                   <div className="font-semibold text-amber-300">
-                    Phone Par Install Kaise Karein:
+                    Offline Kotlin APK Features:
                   </div>
                   <p>
-                    • <strong>Method 1 (.APK File):</strong> Upar <strong>Download Zyklotron-3D-Lab.apk</strong> dabayein → file open karke <strong>Install</strong> karein.
+                    • <strong>Zero Internet Required:</strong> Sabhi 3D/2D simulations, Bainbridge Mass Spectrometer, Wien Filter, aur PDF Lab Manual APK ke <code>assets/public/</code> folder me embedded hain.
                   </p>
                   <p>
-                    • <strong>Method 2 (iPhone / Chrome PWA):</strong> Safari me <Share2 className="w-3 h-3 inline" /> Share → <strong>&quot;Add to Home Screen&quot;</strong> chunein.
+                    • <strong>Native Kotlin Bridge:</strong> Hardware-accelerated OpenGL ES 2.0 + target hit par native vibration haptics.
                   </p>
                 </div>
               </div>
@@ -444,11 +333,11 @@ npm run usb:install`}
 
             <div className="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between">
               <span className="text-[11px] text-slate-400">
-                {isInstalled
-                  ? '✅ App is installed in standalone mode'
+                {isNativeKotlinApp
+                  ? '✅ Running inside Native Offline Kotlin Android APK'
                   : isIOS
                   ? '🍎 iOS detected — Use Safari Share → Add to Home Screen'
-                  : '✅ Signed Zyklotron-3D-Lab.apk (v2.4.0) Ready'}
+                  : '✅ 100% Offline Signed Kotlin app.apk Ready'}
               </span>
               <button
                 onClick={() => setOpenModal(null)}
@@ -498,8 +387,8 @@ npm run usb:install`}
                   <div className="font-bold text-white mt-0.5">compileSdk 34 / minSdk 22</div>
                 </div>
                 <div className="rounded-xl bg-slate-900/90 border border-slate-800 p-3">
-                  <div className="text-[10px] font-mono uppercase text-emerald-300">Native Bridge</div>
-                  <div className="font-bold text-white mt-0.5">Haptics + OpenGL ES 2.0</div>
+                  <div className="text-[10px] font-mono uppercase text-emerald-300">Offline Bundle</div>
+                  <div className="font-bold text-white mt-0.5">assets/public (100% Local)</div>
                 </div>
               </div>
 
@@ -524,7 +413,7 @@ npm run usb:install`}
 
             <div className="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center">
               <span className="text-[11px] text-slate-400">
-                Ready to open in <strong>Android Studio</strong> or install via USB (<code className="text-slate-200">npm run usb:install</code>)
+                Compiled into standalone offline <code className="text-emerald-300">app.apk</code>
               </span>
               <button
                 onClick={() => setOpenModal(null)}
@@ -548,10 +437,10 @@ npm run usb:install`}
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-white">
-                    GitHub Repository &amp; Auto-APK Release
+                    GitHub Repository &amp; Offline Kotlin `app.apk`
                   </h3>
                   <p className="text-xs text-slate-400">
-                    Pre-built <code className="text-emerald-300">public/Zyklotron-3D-Lab.apk</code> + CI workflow included
+                    100% Offline <code className="text-emerald-300">public/app.apk</code> + CI workflow included
                   </p>
                 </div>
               </div>
@@ -566,18 +455,18 @@ npm run usb:install`}
             <div className="mt-4 space-y-3 text-xs">
               <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/30 p-3.5 text-emerald-200 space-y-2">
                 <div className="font-bold text-emerald-300">
-                  Direct APK Already Built &amp; Bundled (`Zyklotron-3D-Lab.apk`)
+                  100% Offline Native Kotlin `app.apk` Built &amp; Bundled
                 </div>
                 <p className="text-slate-300 leading-relaxed">
-                  Humne aapke app ke andar hi signed <strong><code>Zyklotron-3D-Lab.apk</code> (1.4 MB)</strong> build karke rakh diya hai! Aap bina wait kiye seedha niche button se download kar sakte hain:
+                  Humne Gradle + Kotlin 1.9.22 + Android SDK 34 se poora offline <strong><code>app.apk</code></strong> compile karke bundle kar diya hai:
                 </p>
                 <a
                   href={DIRECT_APK_PATH}
-                  download="Zyklotron-3D-Lab.apk"
+                  download="app.apk"
                   className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition"
                 >
                   <Download className="w-3.5 h-3.5 stroke-[2.5]" />
-                  Download Zyklotron-3D-Lab.apk Now
+                  Download Offline app.apk Now
                 </a>
               </div>
 

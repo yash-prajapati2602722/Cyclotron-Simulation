@@ -49,6 +49,7 @@ export default defineConfig(() => {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2,pdf}'],
           maximumFileSizeToCacheInBytes: 15 * 1024 * 1024,
           navigateFallbackDenylist: [
+            /^\/app\.apk$/,
             /^\/Zyklotron-3D-Lab\.apk$/,
             /^\/\.well-known\/.*/,
             /\.apk$/,
